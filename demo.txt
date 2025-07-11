@@ -1,0 +1,52 @@
+<?php
+	include('../connect.php');
+	include('../functions/common_functions.php');
+
+	// Assuming you have the order ID passed as a GET parameter
+	if (isset($_GET['order_id'])) {
+		$order_id = $_GET['order_id'];
+	} else {
+		// Handle the case when the order ID is not provided or invalid
+		// Redirect or display an error message, etc.
+	}
+
+	// Retrieve data from user_orders table
+	$select_order = "SELECT * FROM user_orders WHERE order_id = $order_id";
+	$result_order = mysqli_query($conn, $select_order);
+	$row_order = mysqli_fetch_array($result_order);
+
+	$user_id = $row_order['user_id'];
+	$amount_due = $row_order['amount_due'];
+	$invoice_number = $row_order['invoice_number'];
+	$total_products = $row_order['total_products'];
+	$order_date = $row_order['order_date'];
+	$order_status = $row_order['order_status'];
+
+	// Retrieve data from pending_orders table
+	$select_pending_orders = "SELECT * FROM pending_orders WHERE invoice_number = $invoice_number";
+	$result_pending_orders = mysqli_query($conn, $select_pending_orders);
+
+	// Output the invoice
+	echo "Invoice Number: $invoice_number<br>";
+	echo "Order Date: $order_date<br>";
+	echo "Order Status: $order_status<br>";
+	echo "User ID: $user_id<br>";
+	echo "Total Products: $total_products<br>";
+	echo "Total Amount Due: $amount_due<br><br>";
+
+	// Loop through pending_orders and display product details
+	echo "Product Details:<br>";
+	echo "--------------------------------<br>";
+	while ($row_pending = mysqli_fetch_array($result_pending_orders)) {
+		$product_id = $row_pending['product_id'];
+		$product_name = $row_pending['product_name'];
+		$quantity = $row_pending['quantity'];
+
+		echo "Product ID: $product_id<br>";
+		echo "Product Name: $product_name<br>";
+		echo "Quantity: $quantity<br>";
+		echo "--------------------------------<br>";
+	}
+
+	// You can add further styling or formatting to improve the appearance of the invoice.
+?>
